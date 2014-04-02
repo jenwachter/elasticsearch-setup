@@ -3,7 +3,7 @@
   "version": "0.0.4",
   "author": "Jen Wachter <jenleighkelly@gmail.com>",
   "description": "Reads settings from files and sets up an elasticsearch node.",
-  "main": "./lib/essetup.js",
+  "main": "./bin/essetup",
   "repository": {
     "type": "git",
     "url": "https://github.com/jenwachter/elasticsearch-setup.git"
