@@ -1,6 +1,6 @@
 {
   "name": "elasticsearch-setup",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "author": "Jen Wachter <jenleighkelly@gmail.com>",
   "description": "Reads settings from files and sets up an elasticsearch node.",
   "main": "./bin/essetup",

@@ -7,18 +7,15 @@ var getConfig = require("../lib/getConfig.js");
 var logger = require("../lib/logger.js");
 var elasticsearch = require("../lib/elasticsearch.js");
 
-// default configuration
-var config = {
-    settingsDir: "settings/"
-};
 
+var config = {};
 var es;
 
 async.waterfall([
 
     function connectToElasticsearch(callback) {
 
-        var config = getConfig();
+        config = getConfig();
 
         es = new elasticsearch(config);
         es.testConnection(function (error) {
