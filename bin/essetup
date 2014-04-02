@@ -87,7 +87,7 @@ function createIndex(index, callback) {
     
     async.waterfall([
 
-        function settings(callback) {
+        function settings(cb) {
             var file = config.settingsDir + index + "/settings.json";
 
             fs.exists(file, function (exists) {
@@ -96,69 +96,70 @@ function createIndex(index, callback) {
 
                     fs.readFile(file, "utf8", function (error, settings) {
                         es.putSettings(index, settings, function (error, body) {
-                            callback(error, body);
+                            cb(error, body);
                         });
                     });
 
                 } else {
                     logger.log("No settings found for " + index + " index.", "cyan");
-                    callback(null, null);
+                    cb(null, null);
                 }
 
             });
         },
 
-        function mappings(data, callback) {
+        function mappings(data, cb) {
             var dir = config.settingsDir + index + "/mappings";
 
             async.waterfall([
 
-                function mappingsDirExists(callback) {
+                function mappingsDirExists(cb) {
                     
                     fs.exists(dir, function (exists) {
                         
                         if (exists) {
-                            callback(null, exists);
+                            cb(null, exists);
                         } else {
                             logger.log("No mappings found for " + index + " index.", "cyan");
-                            callback(null, null);
+                            cb(null, null);
                         }
 
                     });
 
                 },
 
-                function getMappings(data, callback) {
+                function getMappings(data, cb) {
                     fs.readdir(dir, function (error, mappings) {
-                        callback(error, mappings);
+                        cb(error, mappings);
                     });
                 },
 
-                function put(mappings, callback) {
+                function put(mappings, cb) {
 
-                    async.each(mappings, function (file, callback) {
+                    async.each(mappings, function (file, cb) {
 
                         var type = file.replace(".json", "");
                         var file = dir + "/" + file;
 
                         fs.readFile(file, "utf8", function (error, mapping) {
                             es.putMapping(index, type, mapping, function (error, body) {
-                                callback(error, body);
+                                cb(error, body);
                             });
                         });
 
                     }, function (error) {
-                        callback(error);
+                        cb(error);
                     });
                 }
 
             ], function (error) {
-                callback(error);
+                cb(error);
             });
         }
 
     ], function (error) {
         if (error) logger.error(error);
+        callback(null);
     });
 
 }
