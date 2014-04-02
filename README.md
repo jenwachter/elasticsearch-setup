@@ -5,11 +5,13 @@ Reads settings from files and sets up an elasticsearch node. Currently supports 
 ## Usage
 
 ```bash
-$ essetup [host] [settingsDir]
+$ essetup [host] [settingsDir] [--user=username] [--pass=password]
 ```
 
 * __host__: fully qualified URL (such as http://localhost:9200)
 * __settingsDir__: location of settings directory relative to where you are running the command (such as ../settings or ./settings)
+* __--user__: (optional) Username for HTTP authorization
+* __--pass__: (optional) Password for HTTP authorization
 
 
 ## Settings directory structure
