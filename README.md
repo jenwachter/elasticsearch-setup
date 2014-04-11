@@ -30,7 +30,7 @@ index_two
 aliases.json
 ```
 
-_Note: Index settings files can also be written IN YAML. For now, elasticsearch requires all other settings files must be JSON._
+_Note: Index settings files can also be written in YAML. For now, elasticsearch requires all other settings files must be JSON._
 
 #### Things to note:
 
