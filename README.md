@@ -18,18 +18,23 @@ $ essetup [host] [settingsDir] [--user=username] [--pass=password]
 
 ```
 index_one
+    settings.json
 	mappings
 		type_one.json
 		type_two.json
 index_two
+    settings.json
 	mappings
 		type_one.json
 		type_two.json
 aliases.json
 ```
 
+_Note: Index settings files can also be written IN YAML. For now, elasticsearch requires all other settings files must be JSON._
+
 #### Things to note:
 
 * `index_one` and `index_two` are directories whose names coorespond to the names of the indicies they are to create.
-* `type_one` and `type_two` are files whose names coorespond to the names of the types they are to create within an index. JSON within the type desigations should follow [this structure](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-put-mapping.html).
+* `settings.json` define the settings of the index they are contained within. JSON/YAML in this file should follow [this structure](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-create-index.html).
+* `type_one.json` and `type_two.json` are files whose names coorespond to the names of the types they are to create within an index. JSON within the type desigations should follow [this structure](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-put-mapping.html).
 * `aliases.json` should follow [this structure](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-aliases.html).

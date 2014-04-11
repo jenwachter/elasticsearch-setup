@@ -1,6 +1,6 @@
 {
   "name": "elasticsearch-setup",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "author": "Jen Wachter <jenleighkelly@gmail.com>",
   "description": "Reads settings from files and sets up an elasticsearch node.",
   "main": "./bin/essetup",
@@ -12,7 +12,8 @@
   "dependencies": {
     "async": "~0.2.9",
     "request": "~2.27.0",
-    "minimist": "0.0.8"
+    "minimist": "0.0.8",
+    "glob": "~3.2.9"
   },
   "bin": {
     "essetup": "./bin/essetup"

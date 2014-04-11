@@ -3,6 +3,8 @@
 // modules
 var async = require("async");
 var fs = require("fs");
+var path = require("path");
+var glob = require("glob");
 var getConfig = require("../lib/getConfig.js");
 var logger = require("../lib/logger.js");
 var elasticsearch = require("../lib/elasticsearch.js");
@@ -59,27 +61,29 @@ async.waterfall([
         });
     },
 
-    function createAliases(data, callback) {
-        var file = config.settingsDir + "aliases.json";
+    function findAliases(data, callback) {
+        glob(config.settingsDir + "/aliases*", function (error, files) {
+            callback(error, files);
+        });
+    },
 
-        fs.exists(file, function (exists) {
+    function createAliases(files, callback) {
 
-            if (exists) {
-                fs.readFile(file, "utf8", function (error, aliases) {
-                    es.putAliases(aliases, function (error, body) {
-                        callback(error, body);
-                    });
-                });
+        if (files.length == 0) {
+            logger.log("No aliases found.", "yellow");
+            return cb(null, null);
+        }
 
-            } else {
-                callback(null, null);
-            }
-
+        fs.readFile(files.shift(), "utf8", function (error, aliases) {
+            es.putAliases(aliases, function (error, body) {
+                if (!error) logger.log("Aliases set.", "cyan");
+                callback(error, body);
+            });
         });
     }
 
 ], function (error) {
-    if (error) logger.error(error);
+    if (error) throw error;
 });
 
 
@@ -87,78 +91,59 @@ function createIndex(index, callback) {
     
     async.waterfall([
 
-        function settings(cb) {
-            var file = config.settingsDir + index + "/settings.json";
-
-            fs.exists(file, function (exists) {
-
-                if (exists) {
-
-                    fs.readFile(file, "utf8", function (error, settings) {
-                        es.putSettings(index, settings, function (error, body) {
-                            cb(error, body);
-                        });
-                    });
-
-                } else {
-                    logger.log("No settings found for " + index + " index.", "cyan");
-                    cb(null, null);
-                }
-
+        function findIndexSettings(cb) {
+            glob(config.settingsDir + index + "/settings*", function (error, files) {
+                cb(error, files);
             });
         },
 
-        function mappings(data, cb) {
-            var dir = config.settingsDir + index + "/mappings";
+        function settings(files, cb) {
 
-            async.waterfall([
+            if (files.length == 0) {
+                logger.log("No settings found for " + index + " index.", "yellow");
+                return cb(null, null);
+            }
 
-                function mappingsDirExists(cb) {
-                    
-                    fs.exists(dir, function (exists) {
-                        
-                        if (exists) {
-                            cb(null, exists);
-                        } else {
-                            logger.log("No mappings found for " + index + " index.", "cyan");
-                            cb(null, null);
-                        }
+            fs.readFile(files.shift(), "utf8", function (error, settings) {
+                es.putSettings(index, settings, function (error, body) {
+                    if (!error) logger.log("Settings set for " + index + " index.", "cyan");
+                    cb(error, body);
+                });
+            });
+        },
 
+        function findMappings(data, cb) {
+            glob(config.settingsDir + index + "/mappings/*", function (error, files) {
+                if (error) return cb(error);
+                cb(error, files);
+            });
+        },
+
+        function mappings(files, cb) {
+
+            if (files.length == 0) {
+                logger.log("No mappings found for " + index + " index.", "yellow");
+                return cb(null, null);
+            }
+
+            async.each(files, function (file, cb) {
+
+                fs.readFile(file, "utf8", function (error, mapping) {
+                    var type = path.basename(file).replace(path.extname(file), "");
+
+                    es.putMapping(index, type, mapping, function (error, body) {
+                        cb(error, body);
+                        if (!error) logger.log("Mapping set for " + type + " type in " + index + " index.", "cyan");
                     });
+                });
 
-                },
-
-                function getMappings(data, cb) {
-                    fs.readdir(dir, function (error, mappings) {
-                        cb(error, mappings);
-                    });
-                },
-
-                function put(mappings, cb) {
-
-                    async.each(mappings, function (file, cb) {
-
-                        var type = file.replace(".json", "");
-                        var file = dir + "/" + file;
-
-                        fs.readFile(file, "utf8", function (error, mapping) {
-                            es.putMapping(index, type, mapping, function (error, body) {
-                                cb(error, body);
-                            });
-                        });
-
-                    }, function (error) {
-                        cb(error);
-                    });
-                }
-
-            ], function (error) {
+            }, function (error) {
                 cb(error);
             });
         }
 
     ], function (error) {
-        if (error) logger.error(error);
+        if (error) throw error;
         callback(null);
     });
 
