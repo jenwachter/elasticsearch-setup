@@ -26,47 +26,95 @@ async.waterfall([
 
     },
 
-    function deleteAll(data, callback) {
-        es.deleteAll(function (error, body) {
-            callback(error, body);
-        });
-    },
-    
-    function findIndicies(data, callback) {
+    // /**
+    //  * Delete all indices
+    //  * @param  {null}   data        No data passed to this callback
+    //  * @param  {Function} callback  Callback function to fun
+    //  * @return null
+    //  */
+    // function deleteAll(data, callback) {
+    //     es.deleteAll(function (error, body) {
+    //         callback(error, body);
+    //     });
+    // },
+
+    /**
+     * Read the settings directory and keep track of the
+     * directories, which designate the indices to create.
+     * @param  {null}   data        No data passed to this callback
+     * @param  {Function} callback  Callback function to fun
+     * @return null
+     */
+    function findIndices(data, callback) {
         fs.readdir(config.settingsDir, function (error, data) {
 
             if (!data) {
-                callback(new Error("No indicies found."));
+                callback(new Error("No indices found."));
             } else {
-                var indicies = [];
+                var indices = [];
 
                 data.forEach(function (element) {
-                    
+
                     var stats = fs.statSync(config.settingsDir + element);
+
+                    // find index directories
                     if (stats && stats.isDirectory()) {
-                        indicies.push(element);
+                      indices.push(element);
                     }
 
                 });
 
-                callback(error, indicies);
+                callback(error, indices);
             }
-            
+
         });
     },
 
-    function createIndicies(data, callback) {
+    /**
+     * Delete all indices that are going to be recreated
+     * @param  {array}     data     Array of index names
+     * @param  {Function} callback  Callback function
+     * @return null
+     */
+    function deleteIndecies(data, callback) {
+
+      es.deleteIndecies(data, function (error, body) {
+          callback(error, data);
+      });
+
+    },
+
+
+    /**
+     * Create indices
+     * @param  {array}     data     Array of index names
+     * @param  {Function} callback  Callback function
+     * @return null
+     */
+    function createIndices(data, callback) {
         async.each(data, createIndex, function (error) {
             callback(error, null);
         });
     },
 
+    /**
+     * Find the aliases configuration file
+     * @param  {null}   data        No data passed to this callback
+     * @param  {Function} callback  Callback function to fun
+     * @return null
+     */
     function findAliases(data, callback) {
         glob(config.settingsDir + "/aliases*", function (error, files) {
             callback(error, files);
         });
     },
 
+    /**
+     * Create aliases, if a confiration file was found
+     * @param  {array}   data       Array of filenames
+     * @param  {Function} callback  Callback function to fun
+     * @return null
+     */
     function createAliases(files, callback) {
 
         if (files.length == 0) {
@@ -88,7 +136,7 @@ async.waterfall([
 
 
 function createIndex(index, callback) {
-    
+
     async.waterfall([
 
         function findIndexSettings(cb) {
