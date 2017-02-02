@@ -5,7 +5,7 @@ Reads settings from files and sets up an elasticsearch node. Currently supports 
 ## Usage
 
 ```bash
-$ essetup [host] [settingsDir] [--user=username] [--pass=password]
+$ essetup [host] [settingsDir] --user=[username] --pass=[password]
 ```
 
 * __host__: fully qualified URL (such as http://localhost:9200)
