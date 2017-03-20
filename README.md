@@ -4,6 +4,8 @@ Reads settings from files and sets up an elasticsearch node. Currently supports 
 
 ## Usage
 
+### HTTP authentication
+
 ```bash
 $ essetup [host] [settingsDir] --user=[username] --pass=[password]
 ```
@@ -12,6 +14,19 @@ $ essetup [host] [settingsDir] --user=[username] --pass=[password]
 * __settingsDir__: location of settings directory relative to where you are running the command (such as ../settings or ./settings)
 * __--user__: (optional) Username for HTTP authorization
 * __--pass__: (optional) Password for HTTP authorization
+
+
+### AWS Signature Version 4 authentication
+
+```bash
+$ essetup [host] [settingsDir] --aws_accessKeyId=[accessKeyId] --aws_secretAccessKey=[secretAccessKey] --aws_region=[region]
+```
+
+* __host__: fully qualified URL (such as http://localhost:9200)
+* __settingsDir__: location of settings directory relative to where you are running the command (such as ../settings or ./settings)
+* __--aws_accessKeyId__: (required) Access key ID
+* __--aws_secretAccessKey__: (required) Secret access key
+* __--aws_region__: (optional) Region (default: us-east-1)
 
 
 ## Settings directory structure

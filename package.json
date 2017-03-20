@@ -11,9 +11,10 @@
   "license": "MIT",
   "dependencies": {
     "async": "~0.2.9",
-    "request": "~2.27.0",
+    "aws4": "^1.6.0",
+    "glob": "~3.2.9",
     "minimist": "0.0.8",
-    "glob": "~3.2.9"
+    "request": "^2.81.0"
   },
   "bin": {
     "essetup": "./bin/essetup"
