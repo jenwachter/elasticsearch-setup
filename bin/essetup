@@ -145,37 +145,37 @@ function createIndex(index, callback) {
                     cb(error, body);
                 });
             });
-        }
+        },
 
-        // function findMappings(data, cb) {
-        //     glob(config.settingsDir + index + "/mappings/*", function (error, files) {
-        //         if (error) return cb(error);
-        //         cb(error, files);
-        //     });
-        // },
-        //
-        // function mappings(files, cb) {
-        //
-        //     if (files.length == 0) {
-        //         logger.log("No mappings found for " + index + " index.", "yellow");
-        //         return cb(null, null);
-        //     }
-        //
-        //     async.each(files, function (file, cb) {
-        //
-        //         fs.readFile(file, "utf8", function (error, mapping) {
-        //             var type = path.basename(file).replace(path.extname(file), "");
-        //
-        //             es.putMapping(index, type, mapping, function (error, body) {
-        //                 cb(error, body);
-        //                 if (!error) logger.log("Mapping set for " + type + " type in " + index + " index.", "cyan");
-        //             });
-        //         });
-        //
-        //     }, function (error) {
-        //         cb(error);
-        //     });
-        // }
+        function findMappings(data, cb) {
+            glob(config.settingsDir + index + "/mappings/*", function (error, files) {
+                if (error) return cb(error);
+                cb(error, files);
+            });
+        },
+
+        function mappings(files, cb) {
+
+            if (files.length == 0) {
+                logger.log("No mappings found for " + index + " index.", "yellow");
+                return cb(null, null);
+            }
+
+            async.each(files, function (file, cb) {
+
+                fs.readFile(file, "utf8", function (error, mapping) {
+                    var type = path.basename(file).replace(path.extname(file), "");
+
+                    es.putMapping(index, type, mapping, function (error, body) {
+                        cb(error, body);
+                        if (!error) logger.log("Mapping set for " + type + " type in " + index + " index.", "cyan");
+                    });
+                });
+
+            }, function (error) {
+                cb(error);
+            });
+        }
 
     ], function (error) {
         if (error) throw error;
